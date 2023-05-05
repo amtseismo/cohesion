@@ -60,12 +60,11 @@ contour=contour[(contour['lat']>48.475) & (contour['lat']<48.55)]
 # plt.plot(contour['lon'].values,contour['lat'].values,'ko',markersize=12)
 
 
-# get local strike
+# get local strike and rotate
 _,az1,az2=geodetics.base.gps2dist_azimuth(contour.iloc[0]['lat'],contour.iloc[0]['lon'],contour.iloc[1]['lat'],contour.iloc[1]['lon'])
 meanlat=np.mean(locs[:,1])
 meanlon=np.mean(locs[:,2])
 # plt.plot(meanlon,meanlat,'ro',markersize=12)
-
 coords=utm.from_latlon(locs[:,1],locs[:,2])
 tcoords=utm.from_latlon(tdf['lat'].values,tdf['lon'].values)
 meanx=np.mean(coords[0])
@@ -123,25 +122,37 @@ plt_dates = dates.date2num(df['datetime'].values)
 stats['dates']= plt_dates
 stats['moment']=mag2mom(stats['mag'].values)
 stats['datetime']=df['datetime']
+stats=stats[(stats['datetime']>start) & (stats['datetime']<=finish)]
 
 # make the mask 
 td=finish-start
 td_hours=td/datetime.timedelta(hours=1)
-atd=np.arange(0,td_hours,4)
-asd=np.arange(-68,78,4)
+dinc=8
+tinc=8
+atd=np.arange(0,td_hours,tinc)
+asd=np.arange(-68,78,dinc)
 mask=np.zeros((len(atd),len(asd)))
 for ii, hours in enumerate(atd):
     for jj, ydist in enumerate(asd):
         tmp=tdf[((tdf['datetime']-start)/np.timedelta64(1, 'h') > hours) &
-                ((tdf['datetime']-start)/np.timedelta64(1, 'h') < hours+4) &
+                ((tdf['datetime']-start)/np.timedelta64(1, 'h') < hours+tinc) &
                 (tdf['roty'] > ydist) &
-                (tdf['roty'] < ydist+4)]
+                (tdf['roty'] < ydist+dinc)]
         if len(tmp) > 0:
             mask[ii,jj]=1
 plt.imshow(mask)
+
+# mask LFEs based on tremor
+tmp=np.zeros(len(stats))
+for ii in range(len(stats)):
+    xind=int(np.floor((stats.iloc[ii]['datetime']-start)/np.timedelta64(1, 'h')/tinc))
+    ypos=lfes[lfes['id']==stats.iloc[ii]['famid']]['roty'].values[0]
+    yind=int(np.floor((ypos-asd[0])/dinc))
+    tmp[ii]=mask[xind,yind]
+stats['mask']=tmp
+stats=stats[stats['mask']==1]
         
-        
-'''
+# make a plot of it all
 fig = plt.figure(tight_layout=True, figsize=(15,10))
 gs = gridspec.GridSpec(11, 25, hspace=0.1, wspace=0.1)
 ax = fig.add_subplot(gs[1:,:24])
@@ -162,11 +173,12 @@ for ii, fid in enumerate(lfes['id'].values):
               & (stats['datetime']<finish)]
     if len(tmp) > 0:
         dates = [pd.to_datetime(d) for d in tmp['datetime']]
-        ec=ax.scatter(dates,lfes.iloc[ii]['roty']*1/1000*np.ones(len(tmp)),
+        ec=ax.scatter(dates,lfes.iloc[ii]['roty']*np.ones(len(tmp)),
                    s=40,c=tmp['mag'].values,vmin=np.min(tmp['mag'].values),
                    vmax=np.max(tmp['mag'].values), cmap='viridis_r',
                    edgecolors='k',linewidth=0.2)
-
+ax.plot(tdf['datetime'],tdf['roty'],'o',color='tab:grey',alpha=0.5,zorder=0)
+ax.grid(True)
 ax.set_xlim((start,finish))
 ax.tick_params(axis='both', which='major', labelsize=14)
 ax.tick_params(axis='both', which='minor', labelsize=14)
@@ -195,5 +207,3 @@ ax1.set_yticklabels([])
 cbar = plt.colorbar(ec, cax=ax2)
 cbar.set_label('Magnitude', fontsize=14)
 cbar.ax.tick_params(labelsize=14)
-
-'''
