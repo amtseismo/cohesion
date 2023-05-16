@@ -15,10 +15,11 @@ from obspy.core import read
 import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib
+plt.rcParams['font.family'] = 'Helvetica'
 import matplotlib.gridspec as gridspec
 
 # setup plot
-fig = plt.figure(figsize=(14,9), tight_layout=True)
+fig = plt.figure(figsize=(11,7), tight_layout=True)
 gs = gridspec.GridSpec(5, 5)
 ax = fig.add_subplot(gs[:4,:])
 ax1 = fig.add_subplot(gs[4,0])
@@ -61,7 +62,7 @@ lfetimes=[122.275,155.075,220.275,238.000,265.900,306.675,316.275,361.525,
           3305.075,3474.100,3498.675,3503.850]
 
 # label figure
-ax.text(900,-0.6,'B',weight='bold', fontsize=24)
+ax.text(900,-0.5,'B',weight='bold', fontsize=32)
 
 # plot tremor waveforms
 fac=30
@@ -80,7 +81,7 @@ for ii in range(len(st)):
 ax.plot([1200,2400],[-0.59,-0.59],'k',linewidth=2,color=(0.25,0.25,0.25))
 ax.text(1720,-0.65,'20 minutes',color=(0.25,0.25,0.25),fontsize=14)
 ax.set_xlim((898,2700))
-ax.set_ylim((-0.6,len(st)-0.3))
+ax.set_ylim((-0.6,len(st)-0.46))
 ax.invert_yaxis()
 ax.get_xaxis().set_visible(False)
 ax.get_yaxis().set_visible(False)
@@ -88,16 +89,17 @@ ax.spines['top'].set_visible(False)
 ax.spines['right'].set_visible(False)
 ax.spines['bottom'].set_visible(False)
 ax.spines['left'].set_visible(False)
-ax.annotate('detections', xy=(1488, 0.1), xytext=(1320, 2.5),
-            arrowprops=dict(arrowstyle="->", connectionstyle="arc3"), fontsize=14)
-ax.annotate('detections', xy=(1488, 1.1), xytext=(1320, 2.5),
-            arrowprops=dict(arrowstyle="->", connectionstyle="arc3"), fontsize=14)
-ax.annotate('detections', xy=(1488, 2.1), xytext=(1320, 2.5),
-            arrowprops=dict(arrowstyle="->", connectionstyle="arc3"), fontsize=14)
-ax.annotate('detections', xy=(1488, 3.1), xytext=(1320, 2.5),
-            arrowprops=dict(arrowstyle="->", connectionstyle="arc3"), fontsize=14)
-ax.annotate('detections', xy=(1488, 4.1), xytext=(1320, 2.5),
-            arrowprops=dict(arrowstyle="->", connectionstyle="arc3"), fontsize=14)
+ax.annotate('', xy=(1488, 0.1), xytext=(1320, 2.5),
+            arrowprops=dict(arrowstyle="->", connectionstyle="arc3", color=(0.25,0.25,0.25)), fontsize=14, color=(0.25,0.25,0.25))
+ax.annotate('', xy=(1488, 1.1), xytext=(1320, 2.5),
+            arrowprops=dict(arrowstyle="->", connectionstyle="arc3", color=(0.25,0.25,0.25)), fontsize=14)
+ax.annotate('', xy=(1488, 2.1), xytext=(1320, 2.5),
+            arrowprops=dict(arrowstyle="->", connectionstyle="arc3", color=(0.25,0.25,0.25)), fontsize=14)
+ax.annotate('', xy=(1488, 3.1), xytext=(1320, 2.5),
+            arrowprops=dict(arrowstyle="->", connectionstyle="arc3", color=(0.25,0.25,0.25)), fontsize=14)
+ax.annotate('', xy=(1488, 4.1), xytext=(1320, 2.5),
+            arrowprops=dict(arrowstyle="->", connectionstyle="arc3", color=(0.25,0.25,0.25)), fontsize=14)
+ax.text(1160,2.5,'detections',color=(0.25,0.25,0.25),fontsize=14)
 
 s1=UTCDateTime(2005,9,13,3,15)
 ax.plot([901,901,920],[4,4.43,4.43],color=(0.25,0.25,0.25), linewidth=3)
@@ -111,7 +113,7 @@ start=UTCDateTime(2005,9,13,3,0)
 #               ' (s)',fontsize=14)
 
 # label figure
-ax1.text(0,1.3,'C',weight='bold', fontsize=24)
+ax1.text(0,1.1,'C',weight='bold', fontsize=32)
 
 # plot first stack
 with open('LZB_Nstack.npy', 'rb') as f:
@@ -129,7 +131,7 @@ ax1.spines['top'].set_visible(False)
 ax1.spines['right'].set_visible(False)
 ax1.spines['bottom'].set_visible(False)
 ax1.spines['left'].set_visible(False)
-ax1.set_ylim((-1.2,1.2))
+ax1.set_ylim((-1.,1.))
 text=ax1.text(0.5,0.7,st[0].stats.station,fontsize=12, weight='bold',color=cmap(0))
 text.set_path_effects([matplotlib.patheffects.Stroke(linewidth=1.5, foreground=(0.8,0.8,0.8)),
                    matplotlib.patheffects.Normal()])
@@ -149,7 +151,7 @@ ax2.spines['top'].set_visible(False)
 ax2.spines['right'].set_visible(False)
 ax2.spines['bottom'].set_visible(False)
 ax2.spines['left'].set_visible(False)
-ax2.set_ylim((-1.2,1.2))
+ax2.set_ylim((-1.,1.))
 text=ax2.text(0.5,0.7,st[1].stats.station,fontsize=12, weight='bold',color=cmap(0.2))
 text.set_path_effects([matplotlib.patheffects.Stroke(linewidth=1.5, foreground=(0.8,0.8,0.8)),
                    matplotlib.patheffects.Normal()])
@@ -159,8 +161,8 @@ with open('PGC_Nstack.npy', 'rb') as f:
     clip = np.load(f)
 ax3.plot(t,clip,color=cmap(0.4), linewidth=2, path_effects=[matplotlib.patheffects.Stroke(linewidth=1, foreground=(0.8,0.8,0.8)), 
                         matplotlib.patheffects.Normal()])
-ax3.plot([0,8],[-1.15,-1.15],'k',linewidth=2,color=(0.25,0.25,0.25))
-ax3.text(2,-1,'8 seconds',color=(0.25,0.25,0.25),fontsize=14)
+ax3.plot([0,8],[1.15,1.15],'k',linewidth=2,color=(0.25,0.25,0.25))
+ax3.text(3,1.3,'8 seconds',color=(0.25,0.25,0.25),fontsize=14)
 ax3.set_xlim((0,8))
 ax3.get_xaxis().set_visible(False)
 ax3.get_yaxis().set_visible(False)
@@ -168,7 +170,7 @@ ax3.spines['top'].set_visible(False)
 ax3.spines['right'].set_visible(False)
 ax3.spines['bottom'].set_visible(False)
 ax3.spines['left'].set_visible(False)
-ax3.set_ylim((-1.2,1.2))
+ax3.set_ylim((-1.,1.))
 text=ax3.text(0.5,0.7,st[2].stats.station,fontsize=12, weight='bold',color=cmap(0.4))
 text.set_path_effects([matplotlib.patheffects.Stroke(linewidth=1.5, foreground=(0.8,0.8,0.8)),
                    matplotlib.patheffects.Normal()])
@@ -188,7 +190,7 @@ ax4.spines['top'].set_visible(False)
 ax4.spines['right'].set_visible(False)
 ax4.spines['bottom'].set_visible(False)
 ax4.spines['left'].set_visible(False)
-ax4.set_ylim((-1.2,1.2))
+ax4.set_ylim((-1.,1.))
 text=ax4.text(0.5,0.7,st[3].stats.station,fontsize=12, weight='bold',color=cmap(0.6))
 text.set_path_effects([matplotlib.patheffects.Stroke(linewidth=1.5, foreground=(0.8,0.8,0.8)),
                    matplotlib.patheffects.Normal()])
@@ -208,7 +210,9 @@ ax5.spines['top'].set_visible(False)
 ax5.spines['right'].set_visible(False)
 ax5.spines['bottom'].set_visible(False)
 ax5.spines['left'].set_visible(False)
-ax5.set_ylim((-1.2,1.2))
+ax5.set_ylim((-1.,1.))
 text=ax5.text(0.5,0.7,st[4].stats.station,fontsize=12, weight='bold',color=cmap(0.8))
 text.set_path_effects([matplotlib.patheffects.Stroke(linewidth=1.5, foreground=(0.8,0.8,0.8)),
                    matplotlib.patheffects.Normal()])
+
+plt.savefig('f2pBC.pdf', dpi=300)
