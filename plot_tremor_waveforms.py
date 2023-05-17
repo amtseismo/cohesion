@@ -19,14 +19,14 @@ plt.rcParams['font.family'] = 'Helvetica'
 import matplotlib.gridspec as gridspec
 
 # setup plot
-fig = plt.figure(figsize=(11,7), tight_layout=True)
-gs = gridspec.GridSpec(5, 5)
-ax = fig.add_subplot(gs[:4,:])
-ax1 = fig.add_subplot(gs[4,0])
-ax2 = fig.add_subplot(gs[4,1])
-ax3 = fig.add_subplot(gs[4,2])
-ax4 = fig.add_subplot(gs[4,3])
-ax5 = fig.add_subplot(gs[4,4])
+fig = plt.figure(figsize=(9,7), tight_layout=True)
+gs = gridspec.GridSpec(7, 5)
+ax = fig.add_subplot(gs[:5,:])
+ax1 = fig.add_subplot(gs[5:,0])
+ax2 = fig.add_subplot(gs[5:,1])
+ax3 = fig.add_subplot(gs[5:,2])
+ax4 = fig.add_subplot(gs[5:,3])
+ax5 = fig.add_subplot(gs[5:,4])
 
 # # color
 cmap = matplotlib.cm.get_cmap('plasma')
@@ -50,6 +50,9 @@ st.detrend()
 # filter the data
 st.filter('bandpass',freqmin=1,freqmax=10)
 
+# decimate
+st=st.resample(5)
+
 # trim to hour
 st.trim(UTCDateTime(2005,9,13,3,0),UTCDateTime(2005,9,13,4,0))
 
@@ -65,7 +68,7 @@ lfetimes=[122.275,155.075,220.275,238.000,265.900,306.675,316.275,361.525,
 ax.text(900,-0.5,'B',weight='bold', fontsize=32)
 
 # plot tremor waveforms
-fac=30
+fac=20
 for ii in range(len(st)):
     rgba = cmap(ii/(len(st)))
     ax.plot(st[ii].times('relative'),st[ii].data/np.median(fac*np.abs(st[ii].data))+ii,color=(0.6,0.6,0.6))
@@ -99,7 +102,7 @@ ax.annotate('', xy=(1488, 3.1), xytext=(1320, 2.5),
             arrowprops=dict(arrowstyle="->", connectionstyle="arc3", color=(0.25,0.25,0.25)), fontsize=14)
 ax.annotate('', xy=(1488, 4.1), xytext=(1320, 2.5),
             arrowprops=dict(arrowstyle="->", connectionstyle="arc3", color=(0.25,0.25,0.25)), fontsize=14)
-ax.text(1160,2.5,'detections',color=(0.25,0.25,0.25),fontsize=14)
+ax.text(1130,2.55,'detections',color=(0.25,0.25,0.25),fontsize=14)
 
 s1=UTCDateTime(2005,9,13,3,15)
 ax.plot([901,901,920],[4,4.43,4.43],color=(0.25,0.25,0.25), linewidth=3)
@@ -131,8 +134,8 @@ ax1.spines['top'].set_visible(False)
 ax1.spines['right'].set_visible(False)
 ax1.spines['bottom'].set_visible(False)
 ax1.spines['left'].set_visible(False)
-ax1.set_ylim((-1.,1.))
-text=ax1.text(0.5,0.7,st[0].stats.station,fontsize=12, weight='bold',color=cmap(0))
+ax1.set_ylim((-1.,1.2))
+text=ax1.text(0.5,0.6,st[0].stats.station,fontsize=12, weight='bold',color=cmap(0))
 text.set_path_effects([matplotlib.patheffects.Stroke(linewidth=1.5, foreground=(0.8,0.8,0.8)),
                    matplotlib.patheffects.Normal()])
 
@@ -151,8 +154,8 @@ ax2.spines['top'].set_visible(False)
 ax2.spines['right'].set_visible(False)
 ax2.spines['bottom'].set_visible(False)
 ax2.spines['left'].set_visible(False)
-ax2.set_ylim((-1.,1.))
-text=ax2.text(0.5,0.7,st[1].stats.station,fontsize=12, weight='bold',color=cmap(0.2))
+ax2.set_ylim((-1.,1.2))
+text=ax2.text(0.5,0.6,st[1].stats.station,fontsize=12, weight='bold',color=cmap(0.2))
 text.set_path_effects([matplotlib.patheffects.Stroke(linewidth=1.5, foreground=(0.8,0.8,0.8)),
                    matplotlib.patheffects.Normal()])
 
@@ -161,8 +164,8 @@ with open('PGC_Nstack.npy', 'rb') as f:
     clip = np.load(f)
 ax3.plot(t,clip,color=cmap(0.4), linewidth=2, path_effects=[matplotlib.patheffects.Stroke(linewidth=1, foreground=(0.8,0.8,0.8)), 
                         matplotlib.patheffects.Normal()])
-ax3.plot([0,8],[1.15,1.15],'k',linewidth=2,color=(0.25,0.25,0.25))
-ax3.text(3,1.3,'8 seconds',color=(0.25,0.25,0.25),fontsize=14)
+ax3.plot([0,8],[1.1,1.1],'k',linewidth=2,color=(0.25,0.25,0.25))
+ax3.text(2.,1.2,'8 seconds',color=(0.25,0.25,0.25),fontsize=14)
 ax3.set_xlim((0,8))
 ax3.get_xaxis().set_visible(False)
 ax3.get_yaxis().set_visible(False)
@@ -170,8 +173,8 @@ ax3.spines['top'].set_visible(False)
 ax3.spines['right'].set_visible(False)
 ax3.spines['bottom'].set_visible(False)
 ax3.spines['left'].set_visible(False)
-ax3.set_ylim((-1.,1.))
-text=ax3.text(0.5,0.7,st[2].stats.station,fontsize=12, weight='bold',color=cmap(0.4))
+ax3.set_ylim((-1.,1.2))
+text=ax3.text(0.5,0.6,st[2].stats.station,fontsize=12, weight='bold',color=cmap(0.4))
 text.set_path_effects([matplotlib.patheffects.Stroke(linewidth=1.5, foreground=(0.8,0.8,0.8)),
                    matplotlib.patheffects.Normal()])
 
@@ -190,8 +193,8 @@ ax4.spines['top'].set_visible(False)
 ax4.spines['right'].set_visible(False)
 ax4.spines['bottom'].set_visible(False)
 ax4.spines['left'].set_visible(False)
-ax4.set_ylim((-1.,1.))
-text=ax4.text(0.5,0.7,st[3].stats.station,fontsize=12, weight='bold',color=cmap(0.6))
+ax4.set_ylim((-1.,1.2))
+text=ax4.text(0.5,0.6,st[3].stats.station,fontsize=12, weight='bold',color=cmap(0.6))
 text.set_path_effects([matplotlib.patheffects.Stroke(linewidth=1.5, foreground=(0.8,0.8,0.8)),
                    matplotlib.patheffects.Normal()])
 
@@ -210,8 +213,8 @@ ax5.spines['top'].set_visible(False)
 ax5.spines['right'].set_visible(False)
 ax5.spines['bottom'].set_visible(False)
 ax5.spines['left'].set_visible(False)
-ax5.set_ylim((-1.,1.))
-text=ax5.text(0.5,0.7,st[4].stats.station,fontsize=12, weight='bold',color=cmap(0.8))
+ax5.set_ylim((-1.,1.2))
+text=ax5.text(0.5,0.6,st[4].stats.station,fontsize=12, weight='bold',color=cmap(0.8))
 text.set_path_effects([matplotlib.patheffects.Stroke(linewidth=1.5, foreground=(0.8,0.8,0.8)),
                    matplotlib.patheffects.Normal()])
 
