@@ -14,6 +14,8 @@ import pygmt
 import datetime
 import matplotlib
 
+pygmt.config(COLOR_MODEL="rgb")
+
 # load data
 locs=np.load("lfe_locations.npy")  
 df = pd.DataFrame(locs, columns = ['id','lat','lon','dep'])
@@ -77,7 +79,7 @@ fig.plot(
     fill=df['dep'],
     cmap=True,
     style="c0.35c",
-    pen="black",
+    pen="0/0/0",
 )
 
 lfeid=254
@@ -131,6 +133,34 @@ fig.colorbar(position="n0.6/0.09c+w5c/0.5c+h", frame="af+lDepth (km)")
 cmap = matplotlib.colormaps['plasma']
 rgba=cmap(0.25,bytes=True)
 
+# plot distance along strike bar
+meanlat=48.510
+meanlon=-123.733
+fig.plot(
+    x=[meanlon],
+    y=[meanlat],
+    style="v0.6c+e",
+    direction=[[132],[7]],
+    pen="2p",
+    fill="black")
+fig.text(
+    text='+40 km',
+    x=-124.25,
+    y=48.8,
+    font="14p,Helvetica-Bold,50/50/50")
+fig.plot(
+    x=[meanlon],
+    y=[meanlat],
+    style="v0.6c+e",
+    direction=[[-48],[7]],
+    pen="2p",
+    fill="black")
+fig.text(
+    text='-40 km',
+    x=-123.23,
+    y=48.23,
+    font="14p,Helvetica-Bold,50/50/50")
+
 # Make inset
 fig.shift_origin(xshift="-1.5c",yshift="-1.5c")
 fig.coast(
@@ -139,7 +169,7 @@ fig.coast(
     resolution="h",
     region="g", 
     frame='a',
-    land="gray",
+    land="200/200/200",
     area_thresh=100,
     water="143/212/255") 
 
@@ -194,4 +224,5 @@ fig.text(text='CA',
 #          )
 
 fig.show()
-fig.savefig('f1pA.pdf',dpi=300)
+fig.savefig('f1pA.png',transparent=True, dpi=300)
+fig.savefig('f1pA.eps',dpi=300)
